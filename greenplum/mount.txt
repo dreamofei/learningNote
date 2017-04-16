@@ -1,0 +1,59 @@
+1.建立windwos共享目录
+2.linux建立本地目录
+3.root 执行mount：mount -t cifs -o username=cht,password=123456 //172.216.176.36/test /var/www/html/mount
+--如果不行，报错：mount: //10.201.50.199/d$/Test/CassetteExtendFolder is not a valid block device
+，需要安装一个组件，命令：yum install cifs-utils；然后再执行mount -t cifs -o username=登录共享目录的用户名,password=登录共享目录的密码 //10.201.50.199/d$/Test/CassetteExtendFolder /data1/remote
+
+4.切换成gpadmin用户：su gpadmin
+
+5.初始化环境遍历：source /opt/greenplum/greenplum-db/greenplum_path.sh
+
+gp，gps可看信息；chown -R gpadmin:gpadmin remote/（测试gpadmin账户？）
+
+6.开启gpfdist：nohup gpfdist -d /data1/test -p 12345 -m 655350 > /home/gpadmin/gpfdist.log 2>&1 &
+
+mkdir remote创建文件夹
+cd ../ 上一层目录
+
+https://gitlab.gridsum.com/opensource/greenplum/wikis/greenplum-import-ad
+
+insert into ad.Account 
+select 
+CAST(AccountKey as int), 
+AccountDisplayName ,
+CAST(AccountID as bigint),
+cast(nullif(AccountBudget, 'NULL') AS decimal),
+CAST(AccountBalance as decimal),
+CAST(TotalCost as decimal),
+CAST(TotalInvestment as decimal),
+GeoRegionTargets ,
+ExcludeIPs ,
+OpenDomains ,
+cast(nullif(LastSyncTime, 'NULL') as date),
+cast(nullif(LastReportReadTime, 'NULL') as date),
+cast(RebateRatio as decimal),
+cast(case when IsDeleted = '1' then 1 else 0 end as BOOLEAN),
+cast(nullif(KeywordUrlParameterSchemeKey, 'NULL') AS int),
+cast(nullif(AdUrlParameterSchemeKey, 'NULL') AS int),
+cast(ExtendedPropertyValuesKey as int),            
+cast(IsEntityChanged as int),                                                          
+cast(nullif(LastImpressionReadTime, 'NULL') as date),                          
+cast(nullif(LastMappingReportReadTime, 'NULL') as date),
+cast(nullif(LastCostReportReadRealTime, 'NULL') as date),  
+cast(nullif(QuotaRemained, 'NULL') AS int),
+cast(nullif(ModifiedTime, 'NULL') as date),    
+cast(case when IsSynchronizing = '1' then 1 else 0 end as BOOLEAN),    
+cast(EffectiveBudgetType as int),    
+cast(case when IsEnabled = '1' then 1 else 0 end as BOOLEAN),    
+RegDomain,
+cast(TokenUseType as int),   
+cast(SynchronizationStatus as int),   
+cast(nullif(AllEntityModifiedTime, 'NULL') as date),
+cast(UserStat as int),
+cast(nullif(UseAgencyTokenTime, 'NULL') as date),
+cast(UseAgencyTokenReson as int),
+cast(nullif(EntityStatusSyncTime, 'NULL') as date),
+cast(case when IsDynamicCreative = '1' then 1 else 0 end as BOOLEAN),
+DynamicCreativeParam
+from externals.Account
+
